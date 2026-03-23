@@ -2,6 +2,7 @@ import { validationResult } from 'express-validator';
 import Task from '../models/Task.js';
 import Project from '../models/Project.js';
 import Notification from '../models/Notification.js';
+import { cacheWrap, delCacheMany } from '../utils/cache.js';
 
 export const createTask = async (req, res) => {
   const errors = validationResult(req);
@@ -39,6 +40,12 @@ export const createTask = async (req, res) => {
     message: `You were assigned a task: ${title}`,
   });
 
+  const memberIds = (project.members || []).map((m) => String(m));
+  await delCacheMany([
+    `tasks:${String(projectId)}`,
+    ...memberIds.map((uid) => `dashboard:${uid}`),
+  ]);
+
   res.status(201).json(task);
 };
 
@@ -75,6 +82,12 @@ export const bulkAssignTask = async (req, res) => {
     }))
   );
 
+  const memberIdsAll = (project.members || []).map((m) => String(m));
+  await delCacheMany([
+    `tasks:${String(projectId)}`,
+    ...memberIdsAll.map((uid) => `dashboard:${uid}`),
+  ]);
+
   const createdTaskIds = createdTasks.map((t) => t._id);
   await Project.findByIdAndUpdate(projectId, { $addToSet: { tasks: { $each: createdTaskIds } } });
 
@@ -98,11 +111,19 @@ export const getTasksByProject = async (req, res) => {
   const isMember = project.members.some((m) => String(m) === String(req.user._id));
   if (!isMember) return res.status(403).json({ message: 'Not a project member' });
 
-  const tasks = await Task.find({ projectId: id })
-    .populate('assignedTo', 'name email')
-    .sort({ createdAt: -1 });
+  const key = `tasks:${String(id)}`;
+  const { value } = await cacheWrap({
+    key,
+    ttlSeconds: 60,
+    getFresh: async () => {
+      const tasks = await Task.find({ projectId: id })
+        .populate('assignedTo', 'name email')
+        .sort({ createdAt: -1 });
+      return tasks;
+    },
+  });
 
-  res.json(tasks);
+  res.json(value);
 };
 
 export const getMyAssignedTasks = async (req, res) => {
@@ -162,6 +183,12 @@ export const updateTask = async (req, res) => {
 
   await task.save();
 
+  const memberIds = (project.members || []).map((m) => String(m));
+  await delCacheMany([
+    `tasks:${String(task.projectId)}`,
+    ...memberIds.map((uid) => `dashboard:${uid}`),
+  ]);
+
   res.json(task);
 };
 
@@ -210,6 +237,14 @@ export const submitTaskReport = async (req, res) => {
   };
 
   await task.save();
+
+  const project = await Project.findById(task.projectId);
+  const memberIds = (project?.members || []).map((m) => String(m));
+  await delCacheMany([
+    `tasks:${String(task.projectId)}`,
+    ...memberIds.map((uid) => `dashboard:${uid}`),
+  ]);
+
   res.json(task);
 };
 
@@ -228,6 +263,12 @@ export const deleteTask = async (req, res) => {
 
   await Task.deleteOne({ _id: id });
   await Project.findByIdAndUpdate(task.projectId, { $pull: { tasks: id } });
+
+  const memberIds = (project.members || []).map((m) => String(m));
+  await delCacheMany([
+    `tasks:${String(task.projectId)}`,
+    ...memberIds.map((uid) => `dashboard:${uid}`),
+  ]);
 
   res.json({ message: 'Task deleted' });
 };

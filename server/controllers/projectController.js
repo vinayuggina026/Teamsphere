@@ -6,6 +6,7 @@ import Invitation from '../models/Invitation.js';
 import Message from '../models/Message.js';
 import Notification from '../models/Notification.js';
 import WorkflowItem from '../models/WorkflowItem.js';
+import { cacheWrap, delCacheMany } from '../utils/cache.js';
 
 export const createProject = async (req, res) => {
   const errors = validationResult(req);
@@ -26,15 +27,27 @@ export const createProject = async (req, res) => {
 
   await User.findByIdAndUpdate(req.user._id, { $addToSet: { projects: project._id } });
 
+  await delCacheMany([`projects:${String(req.user._id)}`, `dashboard:${String(req.user._id)}`]);
+
   res.status(201).json(project);
 };
 
 export const getMyProjects = async (req, res) => {
-  const projects = await Project.find({ members: req.user._id })
-    .populate('leader', 'name email')
-    .sort({ createdAt: -1 });
+  const userId = String(req.user._id);
+  const key = `projects:${userId}`;
 
-  res.json(projects);
+  const { value } = await cacheWrap({
+    key,
+    ttlSeconds: 60,
+    getFresh: async () => {
+      const projects = await Project.find({ members: req.user._id })
+        .populate('leader', 'name email')
+        .sort({ createdAt: -1 });
+      return projects;
+    },
+  });
+
+  res.json(value);
 };
 
 export const getProjectById = async (req, res) => {
@@ -76,6 +89,12 @@ export const deleteProject = async (req, res) => {
 
   await User.updateMany({ projects: id }, { $pull: { projects: id } });
 
+  const memberIds = (project.members || []).map((m) => String(m));
+  await delCacheMany([
+    ...memberIds.map((uid) => `projects:${uid}`),
+    ...memberIds.map((uid) => `dashboard:${uid}`),
+  ]);
+
   res.json({ message: 'Project deleted' });
 };
 
@@ -99,6 +118,13 @@ export const markProjectComplete = async (req, res) => {
     .populate('leader', 'name email')
     .populate('members', 'name email');
 
+  const memberIds = (updated?.members || []).map((m) => String(m?._id || m));
+  await delCacheMany([
+    `tasks:${String(id)}`,
+    ...memberIds.map((uid) => `projects:${uid}`),
+    ...memberIds.map((uid) => `dashboard:${uid}`),
+  ]);
+
   res.json(updated);
 };
 
@@ -119,11 +145,17 @@ export const updateProjectDeadline = async (req, res) => {
   }
 
   project.deadline = nextDeadline;
+  await project.save();
+
   const updated = await Project.findById(id)
     .populate('leader', 'name email')
     .populate('members', 'name email');
 
-  await proujdat.dve();
+  const memberIds = (updated?.members || []).map((m) => String(m?._id || m));
+  await delCacheMany([
+    ...memberIds.map((uid) => `projects:${uid}`),
+    ...memberIds.map((uid) => `dashboard:${uid}`),
+  ]);
 
-  res.json(project);
+  res.json(updated);
 };

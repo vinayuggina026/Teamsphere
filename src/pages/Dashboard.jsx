@@ -42,8 +42,8 @@ const Dashboard = () => {
   const submitTaskReport = async () => {
     if (!selectedTask) return;
     try {
-      await api.put(`/tasks/${selectedTask._id}/report`, {
-        report: taskReportText,
+      await api.post(`/tasks/${selectedTask._id}/report`, {
+        text: taskReportText,
       });
       await load();
       closeTaskModal();
@@ -91,19 +91,13 @@ const Dashboard = () => {
   const load = async () => {
     setError('');
     try {
-      const [p, t, i, n] = await Promise.all([
-        api.get('/projects'),
-        api.get('/tasks/assigned/me'),
-        api.get('/invitations'),
-        api.get('/notifications'),
-      ]);
-
-      setProjects(p.data);
-      setTasks(t.data);
-      setInvitations(i.data);
-      setNotifications(n.data);
+      const d = await api.get('/dashboard');
+      setProjects(d.data?.projects || []);
+      setTasks(d.data?.tasks || []);
+      setInvitations(d.data?.invitations || []);
+      setNotifications(d.data?.notifications || []);
     } catch (e) {
-      setError('Failed to load dashboard');
+      setError(e?.response?.data?.message || 'Failed to load dashboard');
     }
   };
 

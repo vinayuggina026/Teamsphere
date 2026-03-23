@@ -14,6 +14,9 @@ import messageRoutes from './routes/messageRoutes.js';
 import notificationRoutes from './routes/notificationRoutes.js';
 import uploadRoutes from './routes/uploadRoutes.js';
 import workflowRoutes from './routes/workflowRoutes.js';
+import dashboardRoutes from './routes/dashboardRoutes.js';
+
+import { initRedis, getRedisStatus } from './config/redis.js';
 
 dotenv.config();
 
@@ -28,7 +31,7 @@ app.use(
 );
 
 app.get('/health', (req, res) => {
-  res.json({ ok: true, service: 'teamsphere-server' });
+  res.json({ ok: true, service: 'teamsphere-server', redis: getRedisStatus() });
 });
 
 app.use('/uploads', express.static(path.resolve(process.cwd(), 'uploads')));
@@ -41,6 +44,7 @@ app.use('/messages', messageRoutes);
 app.use('/notifications', notificationRoutes);
 app.use('/uploads-api', uploadRoutes);
 app.use('/workflows', workflowRoutes);
+app.use('/dashboard', dashboardRoutes);
 
 app.use(notFound);
 app.use(errorHandler);
@@ -49,6 +53,7 @@ const PORT = process.env.PORT || 5000;
 
 connectDB()
   .then(() => {
+    initRedis();
     app.listen(PORT, () => {
       console.log(`Server running on port ${PORT}`);
     });
