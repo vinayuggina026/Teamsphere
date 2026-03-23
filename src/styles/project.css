@@ -1,0 +1,355 @@
+.project-page {
+  min-height: 100vh;
+  padding: 22px;
+}
+
+.project-top {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.project-back {
+  display: inline-block;
+  padding: 8px 10px;
+  border-radius: 10px;
+  border: 1px solid var(--ts-border);
+  background: var(--ts-surface);
+}
+
+.project-head {
+  display: grid;
+  gap: 4px;
+}
+
+.project-title {
+  font-size: 22px;
+  font-weight: 800;
+}
+
+.project-meta {
+  color: var(--ts-muted);
+  font-size: 14px;
+}
+
+.project-error {
+  margin: 12px 0;
+  padding: 10px 12px;
+  border-radius: 10px;
+  background: rgba(239, 68, 68, 0.10);
+  border: 1px solid rgba(239, 68, 68, 0.25);
+}
+
+.project-progress {
+  background: var(--ts-surface);
+  border: 1px solid var(--ts-border);
+  border-radius: 12px;
+  padding: 14px;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+  margin-bottom: 12px;
+}
+
+.project-progress-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.project-progress-label {
+  font-weight: 700;
+}
+
+.project-progress-value {
+  color: var(--ts-muted);
+  font-weight: 700;
+}
+
+.project-progress-bar {
+  height: 10px;
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.08);
+  overflow: hidden;
+}
+
+.project-progress-fill {
+  height: 100%;
+  background: var(--ts-primary);
+}
+
+.project-tabs {
+  display: flex;
+  gap: 8px;
+  margin: 12px 0;
+}
+
+.project-tab {
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--ts-border);
+  background: var(--ts-surface);
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.project-tab.active {
+  border-color: rgba(37, 99, 235, 0.35);
+  background: var(--ts-primary-100);
+  color: var(--ts-text);
+}
+
+.project-section {
+  background: var(--ts-surface);
+  border: 1px solid var(--ts-border);
+  border-radius: 12px;
+  padding: 14px;
+  box-shadow: 0 10px 24px rgba(15, 23, 42, 0.08);
+}
+
+.project-form {
+  border: 1px solid var(--ts-border);
+  border-radius: 12px;
+  padding: 12px;
+  margin-bottom: 12px;
+  background: rgba(37, 99, 235, 0.03);
+}
+
+.project-form-title {
+  font-weight: 800;
+  margin-bottom: 10px;
+}
+
+.project-form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+@media (max-width: 800px) {
+  .project-form-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.project-label {
+  display: grid;
+  gap: 6px;
+  font-size: 14px;
+  color: var(--ts-muted);
+}
+
+.project-input {
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--ts-border);
+  outline: none;
+  background: #ffffff;
+  color: var(--ts-text);
+}
+
+.project-input:focus {
+  border-color: rgba(37, 99, 235, 0.8);
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.12);
+}
+
+.project-button {
+  margin-top: 10px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(37, 99, 235, 0.35);
+  background: var(--ts-primary);
+  color: #ffffff;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.project-button:hover {
+  background: var(--ts-primary-600);
+}
+
+.project-button.danger {
+  border-color: rgba(239, 68, 68, 0.35);
+  background: rgba(239, 68, 68, 0.95);
+}
+
+.project-button.danger:hover {
+  background: rgba(220, 38, 38, 0.95);
+}
+
+.project-list {
+  display: grid;
+  gap: 10px;
+}
+
+.project-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  border: 1px solid var(--ts-border);
+  border-radius: 12px;
+  padding: 12px;
+}
+
+.project-item-title {
+  font-weight: 800;
+}
+
+.project-item-meta {
+  color: var(--ts-muted);
+  font-size: 13px;
+  margin-top: 4px;
+}
+
+.project-item-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.project-check {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 800;
+  color: var(--ts-text);
+}
+
+.project-progress-input {
+  width: 86px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  border: 1px solid var(--ts-border);
+}
+
+.project-muted {
+  color: var(--ts-muted);
+}
+
+.project-chat {
+  border: 1px solid var(--ts-border);
+  border-radius: 12px;
+  padding: 12px;
+  height: 320px;
+  overflow: auto;
+  background: rgba(15, 23, 42, 0.02);
+}
+
+.project-chat-row {
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid rgba(15, 23, 42, 0.06);
+  background: #ffffff;
+  margin-bottom: 8px;
+}
+
+.project-chat-author {
+  font-weight: 800;
+  font-size: 13px;
+}
+
+.project-chat-msg {
+  margin-top: 4px;
+  color: var(--ts-text);
+}
+
+.project-chat-form {
+  display: grid;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.project-chat-compose {
+  display: grid;
+  gap: 10px;
+}
+
+.project-chat-tools {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+
+.project-file-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--ts-border);
+  background: var(--ts-surface);
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.project-file-btn:hover {
+  background: var(--ts-primary-100);
+}
+
+.project-file-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.project-file-pill {
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--ts-border);
+  background: rgba(37, 99, 235, 0.06);
+  font-size: 12px;
+}
+
+.project-link {
+  border: none;
+  background: transparent;
+  color: var(--ts-primary);
+  cursor: pointer;
+  font-weight: 700;
+}
+
+.project-attach-list {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 8px;
+}
+
+@media (max-width: 800px) {
+  .project-attach-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.project-attach {
+  display: block;
+  border: 1px solid var(--ts-border);
+  border-radius: 12px;
+  overflow: hidden;
+  background: #ffffff;
+}
+
+.project-attach-img {
+  width: 100%;
+  height: 120px;
+  object-fit: cover;
+  display: block;
+}
+
+.project-attach-file {
+  padding: 10px;
+}
+
+.project-attach-name {
+  font-weight: 800;
+  font-size: 13px;
+}
+
+.project-attach-meta {
+  color: var(--ts-muted);
+  font-size: 12px;
+  margin-top: 2px;
+}
